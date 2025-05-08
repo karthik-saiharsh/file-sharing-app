@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "cusrive-font";
+  src: url("fonts/test.ttf");
+}
+
+@font-face {
+  font-family: "inter";
+  src: url("fonts/Inter.ttf");
+}
+
+@font-face {
+  font-family: "roboto";
+  src: url("fonts/Roboto.ttf");
+}
+
+@font-face {
+  font-family: "jakarta";
+  src: url("fonts/Jakarta.ttf");
+}
+
+@theme {
+  --color-background: #ffffff;
+  --font-inter: "inter";
+  --font-roboto: "roboto";
+  --font-jakarta: "jakarta";
+  --color-text-black-grad: #000000;
+  --color-text-white-grad: rgba(255, 255, 255, 0.8);
+  --color-text-color-subheading: rgba(61,61,61,.85);
+  --color-btn-bg: #333333;
+}
+
+
+.bg-heading {
+  background: linear-gradient(to right, #FB7048, #EF53AA, #8F6DF0, #B569B9);
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+  text-shadow: 0px 0px 50px #FFABB8;
+}
