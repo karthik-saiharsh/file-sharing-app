@@ -27,7 +27,7 @@ async function initBot(): Promise<void> {
             resolve();
         });
 
-        client.login(process.env.DISCORD_TOKEN).catch(reject); 
+        client.login(`${process.env.DISCORD_TOKEN}`).catch(reject); 
     });
 
 }
@@ -38,7 +38,7 @@ async function sendData(message: string, file: Buffer, fileName: string) {
         await initBot();
     }
 
-    const channel = await client.channels.cache.get(process.env.DISCORD_CHANNEL_ID as string) as TextChannel;
+    const channel = await client.channels.cache.get(`${process.env.DISCORD_CHANNEL_ID}`) as TextChannel;
 
     try {
         if (channel && channel.isTextBased()) {
