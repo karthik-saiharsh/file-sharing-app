@@ -25,12 +25,12 @@ function HeroSection() {
     <div className="flex z-10 flex-col gap-3 text-center">
         <h1 className="p-3 z-10 font-jakarta font-extrabold text-6xl text-center bg-heading select-none max-sm:text-5xl">Seamless Encrypted File Sharing</h1>
 
-        <h2 className="p-3 z-10 font-inter font-bold text-5xl inline-block bg-gradient-to-b from-text-black-grad to-text-white-grad to-105% bg-clip-text text-transparent select-none max-sm:text-3xl">Your Files. Your Key. Your Rules.</h2>
+        <h2 className="p-3 z-10 font-inter font-bold text-5xl inline-block bg-gradient-to-b from-text-black-grad to-text-white-grad to-105% bg-clip-text text-transparent select-none max-sm:text-3xl">Your Files. Your Key.</h2>
 
         <p className="font-roboto z-10 text-text-color-subheading select-none m-auto max-sm:w-[90%]">
-          Your files are encrypted in your browser. You pick the key-we never see a thing. <br />
-          No sign-up. No tracking. Just secure, private file transfers. <br />
-          Free and open source — the way it should be.
+          Your files are encrypted before being stored on our database. You pick the key-we never see a thing. <br />
+          No sign-up required. No tracking. Just secure, private file transfers. <br />
+          Free and open source.
         </p>
     </div>
   );  

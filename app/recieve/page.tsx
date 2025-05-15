@@ -1,3 +1,5 @@
+'use client';
+
 import BgGradient from "../ui/bg-gradient";
 import { BackgroundBeams } from "@/components/ui/background-beams";
 import Link from "next/link";
@@ -5,28 +7,55 @@ import Link from "next/link";
 import React from 'react'
 
 const page = () => {
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    const key = formData.get("pswdone") as string;
+    const fileID = formData.get("fid") as string;
+
+    const data = new FormData();
+    data.set("type", 'download');
+    data.set("fileid", fileID);
+    data.set("key", key);
+
+    const res = await fetch('api/upload', {
+      method: 'POST',
+      body: data
+    })
+
+    if(!res.ok) throw new Error(await res.text());
+
+    const disposition = res.headers.get('Content-Disposition');
+    let filename = `File_${fileID}`; // fallback filename
+
+    // Get filename from headers of the response
+    if (disposition && disposition.includes('filename=')) {
+      const filenameMatch = disposition.match(/filename="?([^"]+)"?/);
+      if (filenameMatch && filenameMatch[1]) {
+        filename = filenameMatch[1];
+      }
+    }
+  
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+
+    a.remove();
+    window.URL.revokeObjectURL(url);
+  }
+
   return (
     <div className="flex flex-col justify-center items-center h-full bg-gradient-to-b from-[#FFFFFF] to-[#fbe6f1] max-sm:h-[165vh] max-sm:w-[160vw]">
         <BgGradient />
         
-        <form action={async (formData:FormData) => {
-          'use server';
-
-          const data = {
-            fileID: formData.get('fid'),
-            key: formData.get('pswdone'),
-            reqType: formData.get("submit"),
-          };
-
-          console.log(data);
-
-          if(data.reqType === "Download File")
-            console.log("Downloading file...");
-          else
-            console.log("Scheduling file for deletion...");
-            
-
-        }} className="flex flex-col items-center gap-5 z-10 px-15 py-15 bg-card">
+        <form onSubmit={handleSubmit} className="flex flex-col items-center gap-5 z-10 px-15 py-15 bg-card">
           <p className="font-inter text-text-main font-bold text-3xl">Recieve File</p>
 
           <span className="grid gap-1">

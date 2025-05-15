@@ -4,7 +4,6 @@ import BgGradient from "../ui/bg-gradient";
 import { BackgroundBeams } from "@/components/ui/background-beams";
 import Link from "next/link";
 import { useState } from "react";
-import { json } from "stream/consumers";
 
 
 
@@ -30,6 +29,7 @@ const page = () => {
 
     try {
       const data = new FormData();
+      data.set("type", 'upload');
       data.set('file', file);
       data.set('key', key1.trim());
 
