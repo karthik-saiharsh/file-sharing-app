@@ -68,7 +68,7 @@ async function uploadFile(data: Buffer, fileName: string) {
   
   const form = new FormData();
   form.set("reqtype", "fileupload");
-  form.set(" userhash", `${process.env.USR_HASH}`);
+  form.set("userhash", `${process.env.USR_HASH}`);
   form.set("fileToUpload", file_blob, fileName);
 
   const res = await fetch(`${process.env.DB_URL}`, {
@@ -139,5 +139,31 @@ export async function POST(request: NextRequest) {
     });
 
     return ret;
+
+  } else if(type == "delete") {
+    const fileid = data.get("fileid") as string;
+    const result = await sql`select fileurl from filesharingapp where fileID=${fileid}`;
+    let retvalue: Record<string, any> = {};
+    result.forEach(val => retvalue = val);
+
+    const filename = retvalue.fileurl.substr(retvalue.fileurl.lastIndexOf("/") + 1);
+
+    const dataToSend = new FormData();
+    dataToSend.set("reqtype", "deletefiles");
+    dataToSend.set("userhash", `${process.env.USR_HASH}`);
+    dataToSend.set("files", filename);
+
+    const res = await fetch(`${process.env.DB_URL}`, {
+      method: 'POST',
+      body: dataToSend
+    });
+
+    await sql`delete from filesharingapp where fileID=${fileid}`;
+
+    if(!res.ok) return new NextResponse("Could not delete File", {status: 500});
+    else return new NextResponse("File deleted successfully!", {status: 200});
+
+  } else {
+    return NextResponse.json("Invalid request type", {status: 500});
   }
 }
