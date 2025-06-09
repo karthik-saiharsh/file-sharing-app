@@ -36,3 +36,6 @@ An encrypted file sharing app that lets you securely upload and share files usin
 - **No URLs**: Prevents phishing, spoofing, and tracking via links, plus it's easier to remember a file ID than a link.
 - A different kind of **End-to-End Encryption** and **Double Layer Protection** – Only someone with the right key and ID can decrypt the file.
 - The server never stores or logs the actual key.
+
+## Try it out
+https://ks-file-sharing.vercel.app/
