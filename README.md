@@ -4,7 +4,7 @@
 An encrypted file sharing app that lets you securely upload and share files using a custom encryption key. With no URLs to remember or click, and AES-256 encryption, the platform provides a simple and private way to exchange files.
 
 
-![Architecture Diagram](https://github.com/karthik-saiharsh/hex-launcher/blob/main/architecture.png?raw=true)
+![Architecture Diagram](https://raw.githubusercontent.com/karthik-saiharsh/file-sharing-app/refs/heads/main/architecture.png)
 
 
 ## Features
