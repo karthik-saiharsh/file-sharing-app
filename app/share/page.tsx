@@ -13,14 +13,18 @@ const page = () => {
   const [key1, setKey1] = useState<string>("");
   const [key2, setKey2] = useState<string>("");
 
+  
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
+    const file_size = (file.size/1024)/1024;
     
     if(!file) alert("Please upload a file");
     else if(key1?.trim() != key2?.trim()) alert("Keys must match");
     else if (key1.trim() == "" || key2.trim() == "") alert("Key can't be empty");
     else if(file.name.length > 100) alert("Your File Name cannot be longer than 100 characters");
-    else if(file.size > 100 * 1024 * 1024) alert("Upload Files Smaller than 100MB");
+    else if(file_size > 4.50) alert("Upload Files Smaller than 4.5MB");
     else {
       const dataToSend = new FormData();
       dataToSend.set("type", "upload");
