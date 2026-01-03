@@ -140,30 +140,52 @@ export async function POST(request: NextRequest) {
 
     return ret;
 
-  } else if(type == "delete") {
-    const fileid = data.get("fileid") as string;
-    const result = await sql`select fileurl from filesharingapp where fileID=${fileid}`;
-    let retvalue: Record<string, any> = {};
-    result.forEach(val => retvalue = val);
+ } else if(type == "delete") {
 
-    const filename = retvalue.fileurl.substr(retvalue.fileurl.lastIndexOf("/") + 1);
+  const fileid = data.get("fileid") as string;
+  const key = data.get("key") as string;
+  const keysum = await sha256(key);
 
-    const dataToSend = new FormData();
-    dataToSend.set("reqtype", "deletefiles");
-    dataToSend.set("userhash", `${process.env.USR_HASH}`);
-    dataToSend.set("files", filename);
+  const result = await sql`
+    select fileurl, deckey 
+    from filesharingapp 
+    where fileID = ${fileid}
+  `;
 
-    const res = await fetch(`${process.env.DB_URL}`, {
-      method: 'POST',
-      body: dataToSend
-    });
+  if (result.length === 0) {
+    return new NextResponse("File not found", { status: 404 });
+  }
 
-    await sql`delete from filesharingapp where fileID=${fileid}`;
+  let retvalue: Record<string, any> = {};
+  result.forEach(val => retvalue = val);
 
-    if(!res.ok) return new NextResponse("Could not delete File", {status: 500});
-    else return new NextResponse("File deleted successfully!", {status: 200});
+  // 🔐 KEY VERIFICATION (FIX FOR ISSUE #6)
+  if (keysum !== retvalue.deckey) {
+    return new NextResponse("Invalid Key", { status: 401 });
+  }
 
-  } else {
+  const filename = retvalue.fileurl.substr(
+    retvalue.fileurl.lastIndexOf("/") + 1
+  );
+
+  const dataToSend = new FormData();
+  dataToSend.set("reqtype", "deletefiles");
+  dataToSend.set("userhash", `${process.env.USR_HASH}`);
+  dataToSend.set("files", filename);
+
+  const res = await fetch(`${process.env.DB_URL}`, {
+    method: 'POST',
+    body: dataToSend
+  });
+
+  if(!res.ok) {
+    return new NextResponse("Could not delete File", {status: 500});
+  }
+
+  await sql`delete from filesharingapp where fileID=${fileid}`;
+
+  return new NextResponse("File deleted successfully!", {status: 200});
+} else {
     return NextResponse.json("Invalid request type", {status: 500});
   }
 }
