@@ -64,7 +64,7 @@ async function decrypt(fileurl: string, key: string) {
 
 async function uploadFile(data: Buffer, fileName: string) {
 
-  const file_blob = new Blob([data]);
+  const file_blob = new Blob([new Uint8Array(data)]);
   
   const form = new FormData();
   form.set("reqtype", "fileupload");
@@ -121,7 +121,7 @@ export async function POST(request: NextRequest) {
     let retvalue: Record<string, any> = {};
     result.forEach(val => retvalue = val);
     
-    if(keysum != retvalue.deckey) return new NextResponse("Invalid Key", {status: 418});
+    if(!retvalue.deckey || keysum != retvalue.deckey) return NextResponse.json({success: false, message: "Invalid decryption key - please check and try again"}, {status: 401});
     
     const decryptedBuffer = await decrypt(retvalue.fileurl, key);
 
@@ -146,6 +146,8 @@ export async function POST(request: NextRequest) {
     let retvalue: Record<string, any> = {};
     result.forEach(val => retvalue = val);
 
+    if(!retvalue.fileurl) return NextResponse.json({success: false, message: "File not found"}, {status: 404});
+
     const filename = retvalue.fileurl.substr(retvalue.fileurl.lastIndexOf("/") + 1);
 
     const dataToSend = new FormData();
@@ -160,8 +162,8 @@ export async function POST(request: NextRequest) {
 
     await sql`delete from filesharingapp where fileID=${fileid}`;
 
-    if(!res.ok) return new NextResponse("Could not delete File", {status: 500});
-    else return new NextResponse("File deleted successfully!", {status: 200});
+    if(!res.ok) return NextResponse.json({success: false, message: "Could not delete File"}, {status: 500});
+    else return NextResponse.json({success: true, message: "File deleted successfully!"}, {status: 200});
 
   } else {
     return NextResponse.json("Invalid request type", {status: 500});
