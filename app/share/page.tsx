@@ -38,6 +38,10 @@ const page = () => {
 
       if (res_json.success) {
         alert(`File Uploaded Successfully!\nYour FileID is ${res_json.fileid}.\nYou will need this to recieve your file on the other end`);
+        e.currentTarget.reset();
+        setFile(undefined);
+        setKey1("");
+        setKey2("");
       }
       else {
         alert("An error occurred!");
