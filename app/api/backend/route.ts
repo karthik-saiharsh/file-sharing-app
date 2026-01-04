@@ -118,10 +118,12 @@ export async function POST(request: NextRequest) {
     const keysum = await sha256(key);
 
     const result = await sql`select fileurl, deckey, filename, filetype from filesharingapp where fileID=${fileid}`;
+    if (result.length === 0) return new NextResponse("File not found", {status: 404});
+
     let retvalue: Record<string, any> = {};
     result.forEach(val => retvalue = val);
     
-    if(keysum != retvalue.deckey) return new NextResponse("Invalid Key", {status: 418});
+    if(keysum != retvalue.deckey) return new NextResponse("Invalid Key", {status: 401});
     
     const decryptedBuffer = await decrypt(retvalue.fileurl, key);
 
