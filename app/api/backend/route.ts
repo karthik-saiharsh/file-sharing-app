@@ -64,7 +64,7 @@ async function decrypt(fileurl: string, key: string) {
 
 async function uploadFile(data: Buffer, fileName: string) {
 
-  const file_blob = new Blob([data]);
+  const file_blob = new Blob([new Uint8Array(data)]);
   
   const form = new FormData();
   form.set("reqtype", "fileupload");
@@ -142,9 +142,14 @@ export async function POST(request: NextRequest) {
 
   } else if(type == "delete") {
     const fileid = data.get("fileid") as string;
-    const result = await sql`select fileurl from filesharingapp where fileID=${fileid}`;
+    const key = data.get("key") as string;
+    const keysum = await sha256(key);
+
+    const result = await sql`select fileurl, deckey from filesharingapp where fileID=${fileid}`;
     let retvalue: Record<string, any> = {};
     result.forEach(val => retvalue = val);
+    
+    if(keysum != retvalue.deckey) return new NextResponse("Invalid Key", {status: 418});
 
     const filename = retvalue.fileurl.substr(retvalue.fileurl.lastIndexOf("/") + 1);
 
