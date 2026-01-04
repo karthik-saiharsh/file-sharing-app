@@ -50,8 +50,12 @@ const page = () => {
       window.URL.revokeObjectURL(url);
 
     } else if (reqType == "delete") {
-      if(res.ok) alert("File deleted successfully!");
-      else alert("Operation Failed. Could not delete File");
+      if(res.ok) {
+        alert("File deleted successfully!");
+      } else {
+        const errorMsg = await res.text();
+        alert(errorMsg || "Operation Failed. Could not delete File");
+      }
     } else {
       alert("Something went wrong. Try again");
     }
